@@ -246,7 +246,9 @@ html, body,
 
 .phone-frame.portrait {
   transform: rotateZ(0deg);
+  filter: drop-shadow(0 40px 110px rgba(15, 23, 42, 1));
 }
+
 
 .phone-frame.landscape {
   transform: rotateZ(90deg);
@@ -274,8 +276,16 @@ html, body,
   position: relative;
   overflow: hidden;
   border-radius: 32px;
-  background: radial-gradient(circle at top, #0b1120 0%, #020617 60%, #020617 100%);
-  box-shadow: 0 32px 80px rgba(15,23,42,0.9);
+
+  /* achtergond iets lichter + glow in het midden */
+  background:
+    radial-gradient(circle at 20% 0%, #0f172a 0%, #020617 55%, #020617 100%);
+
+  /* duidelijkere rand + hardere schaduw */
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow:
+    0 40px 110px rgba(15, 23, 42, 1),
+    0 0 0 1px rgba(15, 23, 42, 1);
 }
 
 /* app canvas area */
