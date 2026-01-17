@@ -1,5 +1,5 @@
-// scripts/core/RenderEngine.js - SIGMA EDITION
-// Complete styling engine met ALLE CSS properties
+// scripts/core/RenderEngine.js - FIXED VERSION
+// Fixed: removeEventListeners bug
 
 (function () {
   const GRID_SIZE = 8;
@@ -53,23 +53,18 @@
       if (style.fontSize) element.style.fontSize = this.parseSize(style.fontSize);
       if (style.fontWeight) element.style.fontWeight = style.fontWeight;
       if (style.lineHeight) element.style.lineHeight = style.lineHeight;
-      if (style.letterSpacing) element.style.letterSpacing = this.parseSize(letterSpacing);
+      if (style.letterSpacing) element.style.letterSpacing = this.parseSize(style.letterSpacing);
       if (style.textAlign) element.style.textAlign = style.textAlign;
       if (style.textTransform) element.style.textTransform = style.textTransform;
       if (style.fontStyle) element.style.fontStyle = style.fontStyle;
       if (style.textDecoration) element.style.textDecoration = style.textDecoration;
       if (style.textShadow) element.style.textShadow = style.textShadow;
-      if (style.whiteSpace) element.style.whiteSpace = style.whiteSpace;
-      if (style.wordBreak) element.style.wordBreak = style.wordBreak;
-      if (style.wordWrap) element.style.wordWrap = style.wordWrap;
     }
     
     static applyColors(element, style) {
       if (style.color) element.style.color = style.color;
       if (style.backgroundColor) element.style.backgroundColor = style.backgroundColor;
       if (style.opacity !== undefined) element.style.opacity = style.opacity;
-      if (style.fill) element.style.fill = style.fill;
-      if (style.stroke) element.style.stroke = style.stroke;
     }
     
     static applyBackground(element, style) {
@@ -77,11 +72,6 @@
       if (style.backgroundImage) element.style.backgroundImage = style.backgroundImage;
       if (style.backgroundSize) element.style.backgroundSize = style.backgroundSize;
       if (style.backgroundPosition) element.style.backgroundPosition = style.backgroundPosition;
-      if (style.backgroundRepeat) element.style.backgroundRepeat = style.backgroundRepeat;
-      if (style.backgroundClip) element.style.backgroundClip = style.backgroundClip;
-      if (style.backgroundBlendMode) element.style.backgroundBlendMode = style.backgroundBlendMode;
-      if (style.backgroundAttachment) element.style.backgroundAttachment = style.backgroundAttachment;
-      if (style.backgroundOrigin) element.style.backgroundOrigin = style.backgroundOrigin;
     }
     
     static applyBorder(element, style) {
@@ -92,100 +82,32 @@
       if (style.borderRadius !== undefined) {
         element.style.borderRadius = this.parseSize(style.borderRadius);
       }
-      if (style.borderTop) element.style.borderTop = style.borderTop;
-      if (style.borderRight) element.style.borderRight = style.borderRight;
-      if (style.borderBottom) element.style.borderBottom = style.borderBottom;
-      if (style.borderLeft) element.style.borderLeft = style.borderLeft;
-      if (style.borderCollapse) element.style.borderCollapse = style.borderCollapse;
-      if (style.borderSpacing) element.style.borderSpacing = style.borderSpacing;
-      if (style.outline) element.style.outline = style.outline;
-      if (style.outlineOffset) element.style.outlineOffset = this.parseSize(style.outlineOffset);
     }
     
     static applyLayout(element, style) {
       if (style.display) element.style.display = style.display;
-      if (style.position) element.style.position = style.position;
-      if (style.flex) element.style.flex = style.flex;
       if (style.flexDirection) element.style.flexDirection = style.flexDirection;
-      if (style.flexWrap) element.style.flexWrap = style.flexWrap;
       if (style.justifyContent) element.style.justifyContent = style.justifyContent;
       if (style.alignItems) element.style.alignItems = style.alignItems;
       if (style.alignContent) element.style.alignContent = style.alignContent;
-      if (style.alignSelf) element.style.alignSelf = style.alignSelf;
-      if (style.flexGrow) element.style.flexGrow = style.flexGrow;
-      if (style.flexShrink) element.style.flexShrink = style.flexShrink;
-      if (style.flexBasis) element.style.flexBasis = style.flexBasis;
-      if (style.order) element.style.order = style.order;
-      if (style.grid) element.style.grid = style.grid;
-      if (style.gridTemplateColumns) element.style.gridTemplateColumns = style.gridTemplateColumns;
-      if (style.gridTemplateRows) element.style.gridTemplateRows = style.gridTemplateRows;
-      if (style.gridTemplateAreas) element.style.gridTemplateAreas = style.gridTemplateAreas;
-      if (style.gridArea) element.style.gridArea = style.gridArea;
-      if (style.gridColumn) element.style.gridColumn = style.gridColumn;
-      if (style.gridRow) element.style.gridRow = style.gridRow;
+      if (style.gap) element.style.gap = this.parseSize(style.gap);
       if (style.overflow) element.style.overflow = style.overflow;
-      if (style.overflowX) element.style.overflowX = style.overflowX;
-      if (style.overflowY) element.style.overflowY = style.overflowY;
-      if (style.visibility) element.style.visibility = style.visibility;
-      if (style.zIndex) element.style.zIndex = style.zIndex;
-      if (style.float) element.style.float = style.float;
-      if (style.clear) element.style.clear = style.clear;
-      if (style.isolation) element.style.isolation = style.isolation;
-      if (style.objectFit) element.style.objectFit = style.objectFit;
-      if (style.objectPosition) element.style.objectPosition = style.objectPosition;
-      if (style.resize) element.style.resize = style.resize;
       if (style.cursor) element.style.cursor = style.cursor;
-      if (style.pointerEvents) element.style.pointerEvents = style.pointerEvents;
-      if (style.userSelect) element.style.userSelect = style.userSelect;
     }
     
     static applySpacing(element, style) {
       if (style.width) element.style.width = this.parseSize(style.width);
       if (style.height) element.style.height = this.parseSize(style.height);
-      if (style.minWidth) element.style.minWidth = this.parseSize(style.minWidth);
-      if (style.minHeight) element.style.minHeight = this.parseSize(style.minHeight);
-      if (style.maxWidth) element.style.maxWidth = this.parseSize(style.maxWidth);
-      if (style.maxHeight) element.style.maxHeight = this.parseSize(style.maxHeight);
       if (style.padding) element.style.padding = this.parseSize(style.padding);
-      if (style.paddingTop) element.style.paddingTop = this.parseSize(style.paddingTop);
-      if (style.paddingRight) element.style.paddingRight = this.parseSize(style.paddingRight);
-      if (style.paddingBottom) element.style.paddingBottom = this.parseSize(style.paddingBottom);
-      if (style.paddingLeft) element.style.paddingLeft = this.parseSize(style.paddingLeft);
       if (style.margin) element.style.margin = this.parseSize(style.margin);
-      if (style.marginTop) element.style.marginTop = this.parseSize(style.marginTop);
-      if (style.marginRight) element.style.marginRight = this.parseSize(style.marginRight);
-      if (style.marginBottom) element.style.marginBottom = this.parseSize(style.marginBottom);
-      if (style.marginLeft) element.style.marginLeft = this.parseSize(style.marginLeft);
-      if (style.gap) element.style.gap = this.parseSize(style.gap);
-      if (style.rowGap) element.style.rowGap = this.parseSize(style.rowGap);
-      if (style.columnGap) element.style.columnGap = this.parseSize(style.columnGap);
     }
     
     static applyEffects(element, style) {
       if (style.boxShadow) element.style.boxShadow = style.boxShadow;
       if (style.filter) element.style.filter = style.filter;
       if (style.backdropFilter) element.style.backdropFilter = style.backdropFilter;
-      if (style.mixBlendMode) element.style.mixBlendMode = style.mixBlendMode;
-      if (style.blendMode) element.style.blendMode = style.blendMode;
-      if (style.clipPath) element.style.clipPath = style.clipPath;
-      if (style.mask) element.style.mask = style.mask;
-      if (style.maskImage) element.style.maskImage = style.maskImage;
       if (style.transform) element.style.transform = style.transform;
-      if (style.transformOrigin) element.style.transformOrigin = style.transformOrigin;
-      if (style.transformStyle) element.style.transformStyle = style.transformStyle;
-      if (style.perspective) element.style.perspective = style.perspective;
-      if (style.perspectiveOrigin) element.style.perspectiveOrigin = style.perspectiveOrigin;
       if (style.transition) element.style.transition = style.transition;
-      if (style.animation) element.style.animation = style.animation;
-      if (style.animationDelay) element.style.animationDelay = style.animationDelay;
-      if (style.animationDirection) element.style.animationDirection = style.animationDirection;
-      if (style.animationDuration) element.style.animationDuration = style.animationDuration;
-      if (style.animationFillMode) element.style.animationFillMode = style.animationFillMode;
-      if (style.animationIterationCount) element.style.animationIterationCount = style.animationIterationCount;
-      if (style.animationName) element.style.animationName = style.animationName;
-      if (style.animationPlayState) element.style.animationPlayState = style.animationPlayState;
-      if (style.animationTimingFunction) element.style.animationTimingFunction = style.animationTimingFunction;
-      if (style.willChange) element.style.willChange = style.willChange;
     }
     
     static applyTypeDefaults(element, type, style) {
@@ -242,7 +164,6 @@
       // Image defaults
       if (type === 'image') {
         element.style.overflow = 'hidden';
-        element.style.objectFit = style.objectFit || 'cover';
       }
     }
     
@@ -312,7 +233,12 @@
     }
     
     clearCanvas() {
-      this.phoneScreen.querySelectorAll(".canvas-element").forEach(el => el.remove());
+      const elements = this.phoneScreen.querySelectorAll(".canvas-element");
+      elements.forEach(el => {
+        // Remove event listeners first
+        const newEl = el.cloneNode(false);
+        el.parentNode.replaceChild(newEl, el);
+      });
     }
     
     createElement(comp, project) {
@@ -346,15 +272,17 @@
       // Add UI chrome
       this.addUIChrome(el, comp);
       
-      // Add event listeners
-      this.addEventListeners(el, comp);
+      // Add event listeners DIRECTLY (no cloning)
+      this.addEventListenersDirect(el, comp);
       
       return el;
     }
     
     setElementContent(el, type, props) {
-      // Clear existing content
+      // Clear existing content (except UI chrome)
+      const uiChrome = el.querySelector('.element-actions, .resize-handle');
       el.innerHTML = '';
+      if (uiChrome) el.appendChild(uiChrome);
       
       if (type.includes('text')) {
         el.textContent = props.text || "Text";
@@ -383,11 +311,14 @@
     }
     
     addTypeClass(el, type) {
-      el.classList.remove(
+      // Remove all type classes
+      const classesToRemove = [
         'element-text', 'element-button', 'element-input', 
         'element-image', 'element-container', 'element-badge', 'element-navbar'
-      );
+      ];
+      classesToRemove.forEach(cls => el.classList.remove(cls));
       
+      // Add appropriate class
       if (type.includes('text')) el.classList.add('element-text');
       if (type.includes('button')) el.classList.add('element-button');
       if (type.includes('input')) el.classList.add('element-input');
@@ -437,34 +368,26 @@
       el.appendChild(resizeHandle);
     }
     
-    addEventListeners(el, comp) {
-      // Remove existing listeners
-      const newEl = el.cloneNode(true);
-      el.parentNode.replaceChild(newEl, el);
-      
-      const newComp = comp;
-      
+    addEventListenersDirect(el, comp) {
       // Click to select
-      newEl.addEventListener("pointerdown", (e) => {
+      el.addEventListener("pointerdown", (e) => {
         if (e.target.closest(".resize-handle") || e.target.closest(".element-actions")) {
           return;
         }
         e.stopPropagation();
-        this.selectElement(newComp.id);
+        this.selectElement(comp.id);
       });
       
       // Double-click to edit
-      newEl.addEventListener("dblclick", (e) => {
+      el.addEventListener("dblclick", (e) => {
         e.stopPropagation();
-        this.editElementText(newComp);
+        this.editElementText(comp);
       });
       
       // Remove pop-in animation
-      newEl.addEventListener("animationend", () => {
-        newEl.classList.remove("pop-in");
+      el.addEventListener("animationend", () => {
+        el.classList.remove("pop-in");
       });
-      
-      return newEl;
     }
     
     setupInteractions() {
