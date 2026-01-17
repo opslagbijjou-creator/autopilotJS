@@ -159,14 +159,34 @@ html, body,
 }
 
 /* ===== iPhone Screen Fix ===== */
+/* ===== PHONE SCREEN - LICHT EN MODERN ===== */
 .phone-screen {
+  width: 390px;
+  height: 844px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+
+  /* LICHTE ACHTERGROND */
   background: linear-gradient(135deg, 
     #f8fafc 0%, 
     #f1f5f9 50%, 
     #e2e8f0 100%) !important;
-  box-shadow: 
+
+  /* MODERNE SHADOW EN BORDER */
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.9),
     0 30px 70px rgba(15, 23, 42, 0.4) !important;
+}
+
+.app-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  /* Lichte achtergrond voor canvas ook */
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9) !important;
 }
 
 .screen-header {
@@ -245,11 +265,15 @@ html, body,
   transform-style: preserve-3d;
   transform-origin: center center;
 
-  background: radial-gradient(circle at 10% 0%, #111827 0%, #020617 55%, #000 100%);
+  /* MODERNE, LICHTERE FRAME */
+  background: linear-gradient(135deg, 
+    #111827 0%, 
+    #1e293b 30%, 
+    #334155 100%) !important;
   box-shadow:
     0 28px 60px rgba(15, 23, 42, 0.9),
     0 0 0 1px rgba(148, 163, 184, 0.30),
-    inset 0 0 0 1px rgba(15, 23, 42, 0.95);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 
   transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -416,8 +440,15 @@ html, body,
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  border-radius: 999px;
+  border-radius: 12px;
   letter-spacing: 0.02em;
+  
+  /* MODERNE BUTTON STYLING */
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
 }
 
 /* Container */
