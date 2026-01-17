@@ -673,266 +673,487 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================== PROPERTIES PANEL ================== */
 
-  function renderPropertiesPanel(s) {
-    if (!propertiesBody || !elementTypeLabel) return;
+ /* ================== ADVANCED PROPERTIES PANEL (Sigma-style) ================== */
 
-    const proj = s.project;
-    const screen = proj.screens.find((sc) => sc.id === proj.activeScreenId);
-    const selectedId = proj.selectedElementId;
+function renderPropertiesPanel(s) {
+  if (!propertiesBody || !elementTypeLabel) return;
 
-    if (!screen || !selectedId) {
-      elementTypeLabel.innerHTML = `<i class="fas fa-cube"></i> No selection`;
-      propertiesBody.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-mouse-pointer"></i>
-          <p>Select an element to edit its properties</p>
-        </div>
-      `;
-      return;
-    }
+  const proj = s.project;
+  const screen = proj.screens.find((sc) => sc.id === proj.activeScreenId);
+  const selectedId = proj.selectedElementId;
 
-    const elem = screen.components.find((c) => c.id === selectedId);
-    if (!elem) {
-      elementTypeLabel.innerHTML = `<i class="fas fa-cube"></i> No selection`;
-      propertiesBody.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-mouse-pointer"></i>
-          <p>Select an element to edit its properties</p>
-        </div>
-      `;
-      return;
-    }
-
-    const icon =
-      elem.type === "text"
-        ? "fa-font"
-        : elem.type === "button"
-        ? "fa-square"
-        : elem.type === "input"
-        ? "fa-i-cursor"
-        : elem.type === "container"
-        ? "fa-border-all"
-        : elem.type === "image"
-        ? "fa-image"
-        : "fa-cube";
-
-    elementTypeLabel.innerHTML = `
-      <i class="fas ${icon}"></i>
-      <span>${elem.type.toUpperCase()}</span>
-    `;
-
-    const style = (elem.props && elem.props.style) || {};
-    const contentValue =
-      elem.type === "text"
-        ? elem.props.text || ""
-        : elem.type === "button"
-        ? elem.props.label || ""
-        : elem.type === "input"
-        ? elem.props.placeholder || ""
-        : elem.type === "container"
-        ? elem.props.label || ""
-        : elem.type === "image"
-        ? elem.props.alt || ""
-        : "";
-
-    const brightness =
-      style.brightness !== undefined ? style.brightness : 1;
-    const overlay = style.overlay || "none";
-    const overlayIntensity =
-      style.overlayIntensity !== undefined ? style.overlayIntensity : 0.45;
-    const elevation =
-      style.elevation !== undefined ? style.elevation : 0;
-
+  if (!screen || !selectedId) {
+    elementTypeLabel.innerHTML = `<i class="fas fa-cube"></i> No selection`;
     propertiesBody.innerHTML = `
-      <div class="property-group">
-        <h5>Content</h5>
-        <div class="property-item">
-          <label>${elem.type === "image" ? "Alt text" : "Text / Label"}</label>
-          <input
-            class="property-input"
-            type="text"
-            value="${escapeHtml(contentValue)}"
-            data-prop="content"
-          />
-        </div>
+      <div class="empty-state">
+        <i class="fas fa-mouse-pointer"></i>
+        <p>Select an element to edit its properties</p>
       </div>
-
-      <div class="property-group">
-        <h5>Layout</h5>
-        <div class="property-row">
-          <div class="property-item">
-            <label>X</label>
-            <input
-              class="property-input"
-              type="number"
-              data-prop="x"
-              value="${elem.x}"
-            />
-          </div>
-          <div class="property-item">
-            <label>Y</label>
-            <input
-              class="property-input"
-              type="number"
-              data-prop="y"
-              value="${elem.y}"
-            />
-          </div>
-        </div>
-        <div class="property-row">
-          <div class="property-item">
-            <label>Width</label>
-            <input
-              class="property-input"
-              type="number"
-              data-prop="width"
-              value="${elem.width}"
-            />
-          </div>
-          <div class="property-item">
-            <label>Height</label>
-            <input
-              class="property-input"
-              type="number"
-              data-prop="height"
-              value="${elem.height}"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="property-group">
-        <h5>Style</h5>
-        <div class="property-row">
-          <div class="property-item">
-            <label>Text color</label>
-            <input
-              class="property-input"
-              type="color"
-              data-prop="style.textColor"
-              value="${style.textColor || "#0f172a"}"
-            />
-          </div>
-          <div class="property-item">
-            <label>Background</label>
-            <input
-              class="property-input"
-              type="color"
-              data-prop="style.backgroundColor"
-              value="${style.backgroundColor || "#ffffff"}"
-            />
-          </div>
-        </div>
-        <div class="property-row">
-          <div class="property-item">
-            <label>Font size (px)</label>
-            <input
-              class="property-input"
-              type="number"
-              data-prop="style.fontSize"
-              value="${style.fontSize || 16}"
-            />
-          </div>
-          <div class="property-item">
-            <label>Radius (px)</label>
-            <input
-              class="property-input"
-              type="number"
-              data-prop="style.borderRadius"
-              value="${
-                style.borderRadius !== undefined ? style.borderRadius : 8
-              }"
-            />
-          </div>
-        </div>
-        <div class="property-item">
-          <label>Font family</label>
-          <select class="property-input" data-prop="style.fontFamily">
-            ${fontOption(
-              "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              "Inter / System",
-              style.fontFamily
-            )}
-            ${fontOption(
-              "'Poppins', system-ui, sans-serif",
-              "Poppins",
-              style.fontFamily
-            )}
-            ${fontOption(
-              "'Roboto', system-ui, sans-serif",
-              "Roboto",
-              style.fontFamily
-            )}
-            ${fontOption(
-              "'SF Mono', Menlo, Monaco, monospace",
-              "SF Mono",
-              style.fontFamily
-            )}
-          </select>
-        </div>
-        <div class="property-item">
-          <label>Elevation / Shadow</label>
-          <select class="property-input" data-prop="style.elevation">
-            <option value="0" ${elevation == 0 ? "selected" : ""}>None</option>
-            <option value="1" ${elevation == 1 ? "selected" : ""}>Soft</option>
-            <option value="2" ${elevation == 2 ? "selected" : ""}>Deep</option>
-          </select>
-        </div>
-      </div>
-
-      ${
-        elem.type === "image"
-          ? `
-      <div class="property-group">
-        <h5>Image effects</h5>
-        <div class="property-item">
-          <label>Brightness</label>
-          <input
-            class="property-input"
-            type="range"
-            min="0.4"
-            max="1.4"
-            step="0.05"
-            data-prop="style.brightness"
-            value="${brightness}"
-          />
-        </div>
-        <div class="property-item">
-          <label>Overlay</label>
-          <select class="property-input" data-prop="style.overlay">
-            <option value="none"   ${overlay === "none"   ? "selected" : ""}>None</option>
-            <option value="top"    ${overlay === "top"    ? "selected" : ""}>Top dark</option>
-            <option value="bottom" ${overlay === "bottom" ? "selected" : ""}>Bottom dark</option>
-          </select>
-        </div>
-        <div class="property-item">
-          <label>Overlay intensity</label>
-          <input
-            class="property-input"
-            type="range"
-            min="0"
-            max="0.8"
-            step="0.05"
-            data-prop="style.overlayIntensity"
-            value="${overlayIntensity}"
-          />
-        </div>
-      </div>
-      `
-          : ""
-      }
     `;
+    return;
+  }
 
+  const elem = screen.components.find((c) => c.id === selectedId);
+  if (!elem) {
+    elementTypeLabel.innerHTML = `<i class="fas fa-cube"></i> No selection`;
+    propertiesBody.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-mouse-pointer"></i>
+        <p>Select an element to edit its properties</p>
+      </div>
+    `;
+    return;
+  }
+
+  const icon = getIconForType(elem.type);
+  elementTypeLabel.innerHTML = `
+    <i class="fas ${icon}"></i>
+    <span>${elem.type.toUpperCase()}</span>
+  `;
+
+  const props = elem.props || {};
+  const style = props.style || {};
+
+  propertiesBody.innerHTML = `
+    <!-- BASIC PROPERTIES -->
+    <div class="property-group">
+      <h5>Content</h5>
+      ${getContentInputs(elem.type, props)}
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="property-group">
+      <h5>Layout</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>X</label>
+          <input class="property-input" type="number" data-prop="x" value="${elem.x}" />
+        </div>
+        <div class="property-item">
+          <label>Y</label>
+          <input class="property-input" type="number" data-prop="y" value="${elem.y}" />
+        </div>
+      </div>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Width</label>
+          <input class="property-input" type="number" data-prop="width" value="${elem.width}" />
+        </div>
+        <div class="property-item">
+          <label>Height</label>
+          <input class="property-input" type="number" data-prop="height" value="${elem.height}" />
+        </div>
+      </div>
+    </div>
+
+    <!-- TYPOGRAPHY -->
+    <div class="property-group">
+      <h5>Typography</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Font Family</label>
+          <select class="property-input" data-prop="style.fontFamily">
+            ${getFontOptions(style.fontFamily)}
+          </select>
+        </div>
+        <div class="property-item">
+          <label>Font Size</label>
+          <input class="property-input" type="number" data-prop="style.fontSize" 
+                 value="${style.fontSize || 16}" />
+        </div>
+      </div>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Font Weight</label>
+          <select class="property-input" data-prop="style.fontWeight">
+            ${getWeightOptions(style.fontWeight)}
+          </select>
+        </div>
+        <div class="property-item">
+          <label>Line Height</label>
+          <input class="property-input" type="number" step="0.1" 
+                 data-prop="style.lineHeight" value="${style.lineHeight || 1.5}" />
+        </div>
+      </div>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Text Align</label>
+          <select class="property-input" data-prop="style.textAlign">
+            ${getAlignOptions(style.textAlign)}
+          </select>
+        </div>
+        <div class="property-item">
+          <label>Letter Spacing</label>
+          <input class="property-input" type="number" step="0.01" 
+                 data-prop="style.letterSpacing" value="${style.letterSpacing || 0}" />
+        </div>
+      </div>
+    </div>
+
+    <!-- COLORS -->
+    <div class="property-group">
+      <h5>Colors</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Text Color</label>
+          <input class="property-input" type="color" data-prop="style.color" 
+                 value="${style.color || '#1e293b'}" />
+        </div>
+        <div class="property-item">
+          <label>Background</label>
+          <input class="property-input" type="color" data-prop="style.backgroundColor" 
+                 value="${style.backgroundColor || '#ffffff'}" />
+        </div>
+      </div>
+      ${elem.type === 'image' ? `
+      <div class="property-item">
+        <label>Background Image</label>
+        <input class="property-input" type="text" data-prop="style.backgroundImage" 
+               value="${style.backgroundImage || ''}" placeholder="url(...)" />
+      </div>
+      ` : ''}
+    </div>
+
+    <!-- BORDER -->
+    <div class="property-group">
+      <h5>Border</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Border Radius</label>
+          <input class="property-input" type="number" data-prop="style.borderRadius" 
+                 value="${style.borderRadius !== undefined ? style.borderRadius : 8}" />
+        </div>
+        <div class="property-item">
+          <label>Border Width</label>
+          <input class="property-input" type="number" data-prop="style.borderWidth" 
+                 value="${style.borderWidth || 0}" />
+        </div>
+      </div>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Border Color</label>
+          <input class="property-input" type="color" data-prop="style.borderColor" 
+                 value="${style.borderColor || '#e2e8f0'}" />
+        </div>
+        <div class="property-item">
+          <label>Border Style</label>
+          <select class="property-input" data-prop="style.borderStyle">
+            ${getBorderStyleOptions(style.borderStyle)}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPACING -->
+    <div class="property-group">
+      <h5>Spacing</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Padding</label>
+          <input class="property-input" type="text" data-prop="style.padding" 
+                 value="${style.padding || ''}" placeholder="e.g., 12px 24px" />
+        </div>
+        <div class="property-item">
+          <label>Margin</label>
+          <input class="property-input" type="text" data-prop="style.margin" 
+                 value="${style.margin || ''}" placeholder="e.g., 0 auto" />
+        </div>
+      </div>
+    </div>
+
+    <!-- EFFECTS -->
+    <div class="property-group">
+      <h5>Effects</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Box Shadow</label>
+          <input class="property-input" type="text" data-prop="style.boxShadow" 
+                 value="${style.boxShadow || ''}" placeholder="e.g., 0 4px 20px rgba(0,0,0,0.1)" />
+        </div>
+        <div class="property-item">
+          <label>Opacity</label>
+          <input class="property-input" type="range" min="0" max="1" step="0.05" 
+                 data-prop="style.opacity" value="${style.opacity !== undefined ? style.opacity : 1}" />
+        </div>
+      </div>
+      ${elem.type.includes('container') || elem.type.includes('card') ? `
+      <div class="property-item">
+        <label>Backdrop Filter</label>
+        <input class="property-input" type="text" data-prop="style.backdropFilter" 
+               value="${style.backdropFilter || ''}" placeholder="e.g., blur(10px)" />
+      </div>
+      ` : ''}
+    </div>
+
+    <!-- FLEX LAYOUT (voor containers) -->
+    ${elem.type.includes('container') ? `
+    <div class="property-group">
+      <h5>Flex Layout</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Flex Direction</label>
+          <select class="property-input" data-prop="style.flexDirection">
+            ${getFlexDirectionOptions(style.flexDirection)}
+          </select>
+        </div>
+        <div class="property-item">
+          <label>Justify Content</label>
+          <select class="property-input" data-prop="style.justifyContent">
+            ${getJustifyOptions(style.justifyContent)}
+          </select>
+        </div>
+      </div>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Align Items</label>
+          <select class="property-input" data-prop="style.alignItems">
+            ${getAlignItemsOptions(style.alignItems)}
+          </select>
+        </div>
+        <div class="property-item">
+          <label>Gap</label>
+          <input class="property-input" type="text" data-prop="style.gap" 
+                 value="${style.gap || ''}" placeholder="e.g., 12px" />
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
+    <!-- IMAGE EFFECTS -->
+    ${elem.type === 'image' ? `
+    <div class="property-group">
+      <h5>Image Effects</h5>
+      <div class="property-row">
+        <div class="property-item">
+          <label>Object Fit</label>
+          <select class="property-input" data-prop="style.objectFit">
+            <option value="cover" ${(style.objectFit || 'cover') === 'cover' ? 'selected' : ''}>Cover</option>
+            <option value="contain" ${(style.objectFit || 'cover') === 'contain' ? 'selected' : ''}>Contain</option>
+            <option value="fill" ${(style.objectFit || 'cover') === 'fill' ? 'selected' : ''}>Fill</option>
+          </select>
+        </div>
+        <div class="property-item">
+          <label>Filter</label>
+          <input class="property-input" type="text" data-prop="style.filter" 
+                 value="${style.filter || ''}" placeholder="e.g., brightness(1.2)" />
+        </div>
+      </div>
+    </div>
+    ` : ''}
+  `;
+
+  // Add event listeners to all inputs
+  setTimeout(() => {
     const inputs = propertiesBody.querySelectorAll("[data-prop]");
     inputs.forEach((input) => {
-      const handler = () =>
-        handlePropertyChange(elem.id, input.dataset.prop, input);
+      const handler = () => handlePropertyChange(elem.id, input.dataset.prop, input);
       input.addEventListener("input", handler);
       if (input.tagName === "SELECT") {
         input.addEventListener("change", handler);
       }
     });
+  }, 10);
+}
+
+/* ===== HELPER FUNCTIONS ===== */
+
+function getIconForType(type) {
+  if (type.includes('text')) return 'fa-font';
+  if (type.includes('button')) return 'fa-square';
+  if (type.includes('input')) return 'fa-i-cursor';
+  if (type.includes('container') || type.includes('card')) return 'fa-border-all';
+  if (type === 'image') return 'fa-image';
+  if (type.includes('badge')) return 'fa-tag';
+  return 'fa-cube';
+}
+
+function getContentInputs(type, props) {
+  if (type.includes('text')) {
+    return `
+      <div class="property-item">
+        <label>Text Content</label>
+        <input class="property-input" type="text" data-prop="text" 
+               value="${props.text || ''}" />
+      </div>
+    `;
   }
+  if (type.includes('button')) {
+    return `
+      <div class="property-item">
+        <label>Button Text</label>
+        <input class="property-input" type="text" data-prop="label" 
+               value="${props.label || ''}" />
+      </div>
+    `;
+  }
+  if (type.includes('input')) {
+    return `
+      <div class="property-item">
+        <label>Placeholder</label>
+        <input class="property-input" type="text" data-prop="placeholder" 
+               value="${props.placeholder || ''}" />
+      </div>
+    `;
+  }
+  if (type.includes('container') || type.includes('card')) {
+    return `
+      <div class="property-item">
+        <label>Title</label>
+        <input class="property-input" type="text" data-prop="label" 
+               value="${props.label || ''}" />
+      </div>
+    `;
+  }
+  if (type === 'image') {
+    return `
+      <div class="property-item">
+        <label>Image URL</label>
+        <input class="property-input" type="text" data-prop="src" 
+               value="${props.src || ''}" placeholder="https://..." />
+      </div>
+      <div class="property-item">
+        <label>Alt Text</label>
+        <input class="property-input" type="text" data-prop="alt" 
+               value="${props.alt || ''}" />
+      </div>
+    `;
+  }
+  return '';
+}
+
+function getFontOptions(current) {
+  const fonts = [
+    { value: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", label: "System" },
+    { value: "'Inter', system-ui, sans-serif", label: "Inter" },
+    { value: "'Poppins', system-ui, sans-serif", label: "Poppins" },
+    { value: "'Roboto', system-ui, sans-serif", label: "Roboto" },
+    { value: "'SF Mono', Menlo, Monaco, monospace", label: "SF Mono" },
+    { value: "'Georgia', serif", label: "Georgia" },
+    { value: "'Arial', sans-serif", label: "Arial" }
+  ];
+  
+  return fonts.map(f => 
+    `<option value="${f.value}" ${current === f.value ? 'selected' : ''}>${f.label}</option>`
+  ).join('');
+}
+
+function getWeightOptions(current) {
+  const weights = [
+    { value: '100', label: 'Thin (100)' },
+    { value: '300', label: 'Light (300)' },
+    { value: '400', label: 'Normal (400)' },
+    { value: '500', label: 'Medium (500)' },
+    { value: '600', label: 'Semi Bold (600)' },
+    { value: '700', label: 'Bold (700)' },
+    { value: '800', label: 'Extra Bold (800)' },
+    { value: '900', label: 'Black (900)' }
+  ];
+  
+  return weights.map(w => 
+    `<option value="${w.value}" ${current === w.value ? 'selected' : ''}>${w.label}</option>`
+  ).join('');
+}
+
+function getAlignOptions(current) {
+  const aligns = ['left', 'center', 'right', 'justify'];
+  return aligns.map(a => 
+    `<option value="${a}" ${current === a ? 'selected' : ''}>${a.charAt(0).toUpperCase() + a.slice(1)}</option>`
+  ).join('');
+}
+
+function getBorderStyleOptions(current) {
+  const styles = ['none', 'solid', 'dashed', 'dotted', 'double'];
+  return styles.map(s => 
+    `<option value="${s}" ${current === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`
+  ).join('');
+}
+
+function getFlexDirectionOptions(current) {
+  const directions = ['row', 'column', 'row-reverse', 'column-reverse'];
+  return directions.map(d => 
+    `<option value="${d}" ${current === d ? 'selected' : ''}>${d.charAt(0).toUpperCase() + d.slice(1)}</option>`
+  ).join('');
+}
+
+function getJustifyOptions(current) {
+  const options = ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'];
+  return options.map(o => 
+    `<option value="${o}" ${current === o ? 'selected' : ''}>${formatCssValue(o)}</option>`
+  ).join('');
+}
+
+function getAlignItemsOptions(current) {
+  const options = ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'];
+  return options.map(o => 
+    `<option value="${o}" ${current === o ? 'selected' : ''}>${formatCssValue(o)}</option>`
+  ).join('');
+}
+
+function formatCssValue(value) {
+  return value.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+/* ===== IMPROVED PROPERTY CHANGE HANDLER ===== */
+
+function handlePropertyChange(elementId, propKey, input) {
+  const isNumber = input.type === 'number' || input.type === 'range';
+  const raw = input.value;
+  const value = isNumber ? (raw ? Number(raw) : 0) : raw;
+
+  state.setState((prev) => {
+    const proj = prev.project;
+    const screens = proj.screens.map((s) => {
+      if (s.id !== proj.activeScreenId) return s;
+      const comps = s.components.map((c) => {
+        if (c.id !== elementId) return c;
+
+        let updated = { ...c };
+
+        // Direct properties (x, y, width, height)
+        if (['x', 'y', 'width', 'height'].includes(propKey)) {
+          updated[propKey] = value;
+          return updated;
+        }
+
+        // Content properties (text, label, placeholder, src, alt)
+        if (['text', 'label', 'placeholder', 'src', 'alt'].includes(propKey)) {
+          const props = { ...(updated.props || {}) };
+          props[propKey] = value;
+          updated.props = props;
+          return updated;
+        }
+
+        // Style properties
+        if (propKey.startsWith('style.')) {
+          const [, styleKey] = propKey.split('.');
+          const props = { ...(updated.props || {}) };
+          const style = { ...(props.style || {}) };
+          
+          // Clean empty values
+          if (value === '' || value === null || value === undefined) {
+            delete style[styleKey];
+          } else {
+            style[styleKey] = value;
+          }
+          
+          props.style = style;
+          updated.props = props;
+          return updated;
+        }
+
+        return updated;
+      });
+      return { ...s, components: comps };
+    });
+
+    return {
+      project: {
+        ...proj,
+        screens
+      }
+    };
+  });
+}
 
   function handlePropertyChange(elementId, propKey, input) {
     const isNumberType =
