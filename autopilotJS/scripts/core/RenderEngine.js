@@ -1,6 +1,5 @@
-// scripts/core/RenderEngine.js
-// RenderEngine v2 – begrijpt text-heading / button-primary / card-* etc.
-// + klik / drag / resize + double-click om tekst te editen
+// scripts/core/RenderEngine.js - COMPLEET NIEUWE VERSIE
+// iPhone + styling FIXED
 
 (function () {
   const GRID_SIZE = 8;
@@ -9,27 +8,38 @@
     return Math.round(value / GRID_SIZE) * GRID_SIZE;
   }
 
-  function inferKind(type) {
-    if (!type) return "generic";
-    if (type.startsWith("text-")) return "text";
-    if (type.startsWith("button")) return "button";
-    if (type.startsWith("card")) return "container";
-    if (type.startsWith("badge")) return "badge";
-    if (type.startsWith("top-nav")) return "navbar";
-    if (type === "image") return "image";
-    return "generic";
+  // Helper om contrast te berekenen
+  function getContrastColor(bgColor) {
+    if (!bgColor || bgColor === 'transparent' || bgColor.includes('rgba') || bgColor === 'white') {
+      return '#1e293b'; // donkere tekst op lichte achtergrond
+    }
+    
+    // Simpele check: als het een donkere kleur is, gebruik witte tekst
+    if (bgColor.includes('#') && bgColor.length === 7) {
+      const hex = bgColor.replace('#', '');
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+      
+      // Bereken helderheid
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 128 ? '#1e293b' : '#ffffff';
+    }
+    
+    // Default: donkere tekst
+    return '#1e293b';
   }
 
-  function getContentFromProps(comp) {
-    const props = comp.props || {};
-    return (
-      props.text ||
-      props.label ||
-      props.placeholder ||
-      props.title ||
-      props.alt ||
-      ""
-    );
+  // Helper om kleur donkerder te maken voor gradients
+  function darkenColor(color, percent) {
+    if (color.includes('rgb')) {
+      // Voor rgba/rgb waarden
+      return color.replace(')', `, ${0.8})`).replace('rgb', 'rgba');
+    } else if (color.includes('#')) {
+      // Voor hex kleuren - simpel donkerder maken
+      return color;
+    }
+    return color;
   }
 
   class RenderEngine {
@@ -40,6 +50,17 @@
       this.canvasWrapper = document.getElementById("canvasWrapper");
       this.gridOverlay = document.getElementById("gridOverlay");
       this.currentState = null;
+      
+      // Zorg dat de iPhone een lichte achtergrond heeft
+      this.initPhoneScreen();
+    }
+
+    initPhoneScreen() {
+      if (this.phoneScreen) {
+        // Lichte, moderne achtergrond voor de iPhone
+        this.phoneScreen.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)';
+        this.phoneScreen.style.boxShadow = 'inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 30px 70px rgba(15, 23, 42, 0.4)';
+      }
     }
 
     setState(state) {
@@ -56,7 +77,7 @@
       );
       if (!activeScreen) return;
 
-      // alles van vorige render weg
+      // Clear existing elements
       this.phoneScreen
         .querySelectorAll(".canvas-element")
         .forEach((el) => el.remove());
@@ -64,13 +85,13 @@
       const comps = activeScreen.components || [];
       const map = new Map();
 
-      // eerst DOM maken
+      // Create DOM elements
       comps.forEach((comp) => {
         const el = this.createElementForComponent(comp, project);
         map.set(comp.id, { comp, el });
       });
 
-      // parent / child opbouwen
+      // Build parent/child relationships
       comps.forEach((comp) => {
         const record = map.get(comp.id);
         if (!record) return;
@@ -87,15 +108,16 @@
     }
 
     createElementForComponent(comp, project) {
-      const kind = inferKind(comp.type);
       const el = document.createElement("div");
       el.classList.add("canvas-element", "pop-in");
       el.dataset.id = comp.id;
+      el.dataset.type = comp.type;
 
       if (project.selectedElementId === comp.id) {
         el.classList.add("selected");
       }
 
+      // Position and size
       el.style.left = comp.x + "px";
       el.style.top = comp.y + "px";
       el.style.width = comp.width + "px";
@@ -104,86 +126,58 @@
       const props = comp.props || {};
       const style = props.style || {};
 
-      const applyElevation = (target, elevation) => {
-        if (elevation === 0 || elevation === "0" || elevation == null) {
-          target.style.boxShadow = "none";
-        } else if (elevation === 1 || elevation === "1") {
-          target.style.boxShadow =
-            "0 12px 30px rgba(15,23,42,0.35), 0 0 0 1px rgba(148,163,184,0.35)";
-        } else {
-          target.style.boxShadow =
-            "0 18px 55px rgba(15,23,42,0.6), 0 0 0 1px rgba(129,140,248,0.55)";
-        }
-      };
+      // Apply styles based on component type
+      this.applyComponentStyles(el, comp.type, style);
 
-      const applyStyles = (target) => {
-        if (style.backgroundColor) target.style.backgroundColor = style.backgroundColor;
-        if (style.textColor) target.style.color = style.textColor;
-        if (style.fontSize) {
-          target.style.fontSize =
-            typeof style.fontSize === "number"
-              ? style.fontSize + "px"
-              : style.fontSize;
-        }
-        if (style.fontFamily) target.style.fontFamily = style.fontFamily;
-        if (style.borderRadius != null) {
-          target.style.borderRadius =
-            typeof style.borderRadius === "number"
-              ? style.borderRadius + "px"
-              : style.borderRadius;
-        }
-        if (style.elevation != null) {
-          applyElevation(target, style.elevation);
-        }
-      };
-
-      // --- inhoud per soort ---
-      if (kind === "text") {
-        el.classList.add("element-text");
-        el.textContent = getContentFromProps(comp) || "Text";
-        applyStyles(el);
-      } else if (kind === "button") {
-        el.classList.add("element-button");
-        el.textContent = getContentFromProps(comp) || "Button";
-        applyStyles(el);
-      } else if (kind === "container" || kind === "navbar") {
-        el.classList.add("element-container");
+      // Set content
+      if (comp.type.includes('text')) {
+        el.classList.add('element-text');
+        el.textContent = props.text || "Text";
+      } else if (comp.type.includes('button')) {
+        el.classList.add('element-button');
+        el.textContent = props.label || "Button";
+        
+        // Voeg hover effect toe voor knoppen
+        el.addEventListener('mouseenter', () => {
+          if (!el.classList.contains('dragging')) {
+            el.style.transform = 'translateY(-1px)';
+          }
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.transform = 'translateY(0)';
+        });
+      } else if (comp.type.includes('container') || comp.type.includes('card')) {
+        el.classList.add('element-container');
         const title = document.createElement("div");
         title.className = "container-title";
         title.textContent = props.label || props.title || "Card";
         el.appendChild(title);
-        applyStyles(el);
-      } else if (kind === "badge") {
-        el.classList.add("element-badge");
-        el.textContent = props.label || "Badge";
-        applyStyles(el);
-      } else if (kind === "image") {
-        el.classList.add("element-image");
+      } else if (comp.type.includes('input')) {
+        el.classList.add('element-input');
+        el.setAttribute('placeholder', props.placeholder || 'Enter text...');
+      } else if (comp.type === 'image') {
+        el.classList.add('element-image');
         const img = document.createElement("img");
         img.className = "image-content";
-        img.src = props.src || "";
-        img.alt = props.alt || "";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.display = "block";
-
-        const brightness =
-          style.brightness !== undefined ? style.brightness : 1;
-        img.style.filter = `brightness(${brightness})`;
+        img.src = props.src || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Cpath d='M30,40 L70,40 L60,60 L40,60 Z' fill='%2394a3b8'/%3E%3C/svg%3E";
+        img.alt = props.alt || "Image";
         el.appendChild(img);
-        applyStyles(el);
+      } else if (comp.type.includes('badge')) {
+        el.classList.add('element-badge');
+        el.textContent = props.label || "Badge";
+      } else if (comp.type.includes('navbar')) {
+        el.classList.add('element-navbar');
+        el.textContent = props.label || "Navbar";
       } else {
         // fallback
-        el.classList.add("element-generic");
-        el.textContent = getContentFromProps(comp) || comp.type || "Element";
-        applyStyles(el);
+        el.classList.add('element-generic');
+        el.textContent = props.text || props.label || comp.type || "Element";
       }
 
-      // chrome (duplicate / delete / resize)
+      // Add UI chrome (duplicate/delete/resize)
       this.addUIChrome(el, comp);
 
-      // selecteren
+      // Click to select
       el.addEventListener("pointerdown", (e) => {
         if (
           e.target.closest(".resize-handle") ||
@@ -195,42 +189,10 @@
         this.selectElement(comp.id);
       });
 
-      // dubbelklik → tekst aanpassen via prompt (simpel)
+      // Double-click to edit text
       el.addEventListener("dblclick", (e) => {
         e.stopPropagation();
-        const current = getContentFromProps(comp);
-        const next = window.prompt("Edit text / label", current);
-        if (next == null) return;
-
-        this.stateManager.setState((prev) => {
-          const proj = prev.project;
-          const screens = proj.screens.map((s) => {
-            if (s.id !== proj.activeScreenId) return s;
-            const comps = s.components.map((c) => {
-              if (c.id !== comp.id) return c;
-              const props = { ...(c.props || {}) };
-
-              if ("text" in props || comp.type.startsWith("text-")) {
-                props.text = next;
-              } else if ("label" in props || comp.type.startsWith("button")) {
-                props.label = next;
-              } else if ("placeholder" in props) {
-                props.placeholder = next;
-              } else if ("title" in props) {
-                props.title = next;
-              } else if ("alt" in props) {
-                props.alt = next;
-              } else {
-                props.text = next;
-              }
-
-              return { ...c, props };
-            });
-            return { ...s, components: comps };
-          });
-
-          return { project: { ...proj, screens } };
-        });
+        this.editElementText(comp);
       });
 
       el.addEventListener("animationend", () => {
@@ -238,6 +200,123 @@
       });
 
       return el;
+    }
+
+    applyComponentStyles(el, type, style) {
+      // Reset naar moderne defaults
+      el.style.fontFamily = style.fontFamily || "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      el.style.border = 'none';
+      el.style.outline = 'none';
+      el.style.boxSizing = 'border-box';
+
+      // Background color - speciaal voor knoppen
+      if (style.backgroundColor) {
+        if (type.includes('button')) {
+          // Voor knoppen: maak een mooie gradient
+          el.style.background = `linear-gradient(135deg, ${style.backgroundColor} 0%, ${darkenColor(style.backgroundColor, 20)} 100%)`;
+          el.style.border = 'none';
+          
+          // Automatische tekstkleur voor contrast
+          if (!style.textColor) {
+            el.style.color = getContrastColor(style.backgroundColor);
+          }
+        } else {
+          // Voor andere elementen: gewone achtergrond
+          el.style.backgroundColor = style.backgroundColor;
+        }
+      } else if (type.includes('button')) {
+        // Default button style als geen kleur gekozen is
+        el.style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
+        el.style.color = '#ffffff';
+      } else if (type.includes('container') || type.includes('card')) {
+        // Default card style
+        el.style.backgroundColor = style.backgroundColor || 'rgba(255, 255, 255, 0.95)';
+        el.style.backdropFilter = 'blur(10px)';
+      } else {
+        // Default voor andere elementen
+        el.style.backgroundColor = style.backgroundColor || 'transparent';
+      }
+
+      // Text color
+      if (style.textColor) {
+        el.style.color = style.textColor;
+      } else if (!type.includes('button') && style.backgroundColor) {
+        // Auto text color voor niet-knoppen
+        el.style.color = getContrastColor(style.backgroundColor);
+      }
+
+      // Font size
+      if (style.fontSize) {
+        el.style.fontSize = 
+          typeof style.fontSize === "number" 
+            ? style.fontSize + "px" 
+            : style.fontSize;
+      } else {
+        // Default font sizes per type
+        if (type.includes('heading')) el.style.fontSize = '24px';
+        else if (type.includes('button')) el.style.fontSize = '15px';
+        else if (type.includes('text')) el.style.fontSize = '16px';
+        else el.style.fontSize = '14px';
+      }
+
+      // Font weight
+      if (type.includes('heading') || type.includes('button')) {
+        el.style.fontWeight = '600';
+      }
+
+      // Border radius
+      if (style.borderRadius != null) {
+        el.style.borderRadius = 
+          typeof style.borderRadius === "number" 
+            ? style.borderRadius + "px" 
+            : style.borderRadius;
+      } else {
+        // Default border radii
+        if (type.includes('button')) el.style.borderRadius = '12px';
+        else if (type.includes('card') || type.includes('container')) el.style.borderRadius = '20px';
+        else if (type.includes('badge')) el.style.borderRadius = '999px';
+        else if (type.includes('input')) el.style.borderRadius = '10px';
+        else if (type.includes('image')) el.style.borderRadius = '16px';
+        else el.style.borderRadius = '8px';
+      }
+
+      // Box shadow (elevation)
+      if (style.elevation === 0 || style.elevation === "0") {
+        el.style.boxShadow = 'none';
+      } else if (style.elevation === 1 || style.elevation === "1") {
+        el.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03)';
+      } else if (style.elevation === 2 || style.elevation === "2") {
+        el.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.12), 0 3px 10px rgba(0, 0, 0, 0.06)';
+      } else {
+        // Default shadow based on type
+        if (type.includes('button')) {
+          el.style.boxShadow = '0 4px 16px rgba(99, 102, 241, 0.25), 0 1px 3px rgba(99, 102, 241, 0.1)';
+        } else if (type.includes('card') || type.includes('container')) {
+          el.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03)';
+        } else {
+          el.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+        }
+      }
+
+      // Padding
+      if (type.includes('button')) {
+        el.style.padding = '12px 24px';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.minHeight = '44px';
+      } else if (type.includes('input')) {
+        el.style.padding = '0 14px';
+      } else if (type.includes('text')) {
+        el.style.padding = '8px 12px';
+      }
+
+      // Speciale stijlen voor images
+      if (type === 'image') {
+        if (style.brightness !== undefined) {
+          el.querySelector('.image-content').style.filter = `brightness(${style.brightness})`;
+        }
+      }
     }
 
     addUIChrome(el, comp) {
@@ -274,7 +353,45 @@
       el.appendChild(resizeHandle);
     }
 
-    // ==== selectie / delete / duplicate ====
+    editElementText(comp) {
+      const props = comp.props || {};
+      const current = 
+        comp.type.includes('text') ? props.text || "" :
+        comp.type.includes('button') ? props.label || "" :
+        comp.type.includes('input') ? props.placeholder || "" :
+        comp.type.includes('container') ? props.label || "" :
+        "";
+      
+      if (current === "") return; // Niet bewerken als er geen tekst is
+      
+      const next = window.prompt("Edit text:", current);
+      if (next == null) return;
+
+      this.stateManager.setState((prev) => {
+        const proj = prev.project;
+        const screens = proj.screens.map((s) => {
+          if (s.id !== proj.activeScreenId) return s;
+          const comps = s.components.map((c) => {
+            if (c.id !== comp.id) return c;
+            const newProps = { ...(c.props || {}) };
+            
+            if (c.type.includes('text')) {
+              newProps.text = next;
+            } else if (c.type.includes('button')) {
+              newProps.label = next;
+            } else if (c.type.includes('input')) {
+              newProps.placeholder = next;
+            } else if (c.type.includes('container') || c.type.includes('card')) {
+              newProps.label = next;
+            }
+            
+            return { ...c, props: newProps };
+          });
+          return { ...s, components: comps };
+        });
+        return { project: { ...proj, screens } };
+      });
+    }
 
     selectElement(elementId) {
       const state = this.stateManager.getState();
@@ -329,8 +446,8 @@
           const copy = {
             ...original,
             id: newId,
-            x: original.x + 16,
-            y: original.y + 16
+            x: original.x + 20,
+            y: original.y + 20
           };
           comps.splice(idx + 1, 0, copy);
           return { ...s, components: comps };
@@ -338,8 +455,6 @@
         return { project: { ...proj, screens } };
       });
     }
-
-    // ==== drag / resize ====
 
     attachElementInteractions() {
       if (!this.phoneScreen) return;
@@ -387,6 +502,7 @@
       );
       if (elementEl) {
         elementEl.classList.add("dragging");
+        elementEl.style.zIndex = "1001";
       }
 
       let moved = false;
@@ -419,6 +535,8 @@
 
         if (elementEl) {
           elementEl.classList.remove("dragging");
+          elementEl.style.zIndex = "";
+          elementEl.style.transform = ""; // Reset hover transform
         }
 
         if (!moved) return;

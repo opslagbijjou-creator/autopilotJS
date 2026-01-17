@@ -1,339 +1,304 @@
-/* ============================
-   CANVAS: ELEMENTEN & STATES
-   ============================ */
+/* ========== PHONE FRAME - MODERN EN LICHT ========== */
 
-/* Basis canvas-element */
-.canvas-element {
+#phoneFrame.phone-frame {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  border-radius: 44px;
+  padding: 12px;
+  background: linear-gradient(135deg, 
+    #111827 0%, 
+    #020617 20%, 
+    #000000 80%, 
+    #111827 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 35px 80px rgba(15, 23, 42, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.phone-screen {
+  width: 390px;
+  height: 844px;
+  position: relative;
+  background: linear-gradient(135deg, 
+    #f8fafc 0%, 
+    #f1f5f9 50%, 
+    #e2e8f0 100%);
+  box-shadow: 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 30px 70px rgba(15, 23, 42, 0.4);
+  overflow: hidden;
+  border-radius: 36px;
+}
+
+.phone-notch {
+  width: 160px;
+  height: 28px;
+  background: #020617;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
   position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.phone-home-bar {
+  width: 120px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 999px;
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+/* ========== CANVAS ELEMENTS - MODERN DESIGN ========== */
+
+.phone-screen .canvas-element {
+  position: absolute;
+  box-sizing: border-box;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
-  box-sizing: border-box;
-  border: 2px solid transparent;
-  outline: none;
-  transition:
-    box-shadow 0.12s ease,
-    border-color 0.12s ease,
-    transform 0.08s ease,
-    opacity 0.08s ease;
+  
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.2s ease;
 }
 
-/* Tijdens slepen */
-.canvas-element.dragging {
-  opacity: 0.95;
+.phone-screen .canvas-element.dragging {
+  opacity: 0.85;
   cursor: grabbing;
   z-index: 1001;
-  box-shadow: 0 14px 45px rgba(15, 23, 42, 0.45);
-}
-
-/* Geselecteerd element */
-.canvas-element.selected {
-  border-color: #22c55e;
+  transform: scale(1.02) !important;
   box-shadow:
-    0 0 0 1px rgba(34, 197, 94, 0.65),
-    0 14px 45px rgba(15, 23, 42, 0.35);
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 2px #6366f1 !important;
 }
 
-/* Focus via keyboard */
-.canvas-element.keyboard-focus {
-  outline: 2px solid #38bdf8;
+.phone-screen .canvas-element.selected {
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
+  z-index: 1000;
 }
 
-/* Element dat net is toegevoegd / geflashed wordt */
-.canvas-element.flash {
-  animation: canvas-element-flash 0.35s ease-out;
+/* ========== SPECIFIC ELEMENT TYPES ========== */
+
+.phone-screen .element-text {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1e293b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
-@keyframes canvas-element-flash {
-  0% {
-    box-shadow:
-      0 0 0 0 rgba(34, 197, 94, 0.7),
-      0 10px 35px rgba(15, 23, 42, 0.35);
-  }
-  100% {
-    box-shadow:
-      0 0 0 12px rgba(34, 197, 94, 0),
-      0 10px 35px rgba(15, 23, 42, 0.2);
-  }
-}
-
-/* Disabled / locked element */
-.canvas-element.locked {
-  cursor: default;
-  opacity: 0.75;
-  border-style: dashed;
-}
-
-/* Verborgen maar nog aanwezig in de state */
-.canvas-element.hidden {
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-/* ============================
-   CANVAS: ELEMENT ACTIONS
-   (icons boven element: edit, delete, etc.)
-   ============================ */
-
-.element-actions {
-  position: absolute;
-  top: -10px;
-  right: -10px;
+.phone-screen .element-button {
   display: flex;
-  gap: 4px;
-  z-index: 1010;
-  pointer-events: auto;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  min-height: 44px;
+  cursor: pointer;
+  
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  box-shadow:
+    0 4px 16px rgba(99, 102, 241, 0.25),
+    0 1px 3px rgba(99, 102, 241, 0.1);
+  
+  transition: all 0.2s ease;
 }
 
-.action-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.35);
-  background: radial-gradient(circle at 0% 0%, #0f172a, #020617);
+.phone-screen .element-button:hover:not(.dragging) {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 20px rgba(99, 102, 241, 0.35),
+    0 2px 4px rgba(99, 102, 241, 0.15);
+}
+
+.phone-screen .element-input {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 14px;
+  color: #1e293b;
+  transition: all 0.2s ease;
+}
+
+.phone-screen .element-input::placeholder {
+  color: #94a3b8;
+}
+
+.phone-screen .element-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.phone-screen .element-container {
+  border-radius: 20px;
+  padding-top: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.phone-screen .container-title {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.phone-screen .element-image {
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.phone-screen .element-image .image-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.phone-screen .element-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  color: #e5e7eb;
-  cursor: pointer;
-  box-shadow:
-    0 8px 18px rgba(15, 23, 42, 0.5),
-    0 0 0 1px rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(16px);
-  transition:
-    transform 0.1s ease,
-    box-shadow 0.1s ease,
-    border-color 0.1s ease,
-    background 0.12s ease,
-    color 0.12s ease;
-}
-
-.action-btn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(148, 163, 184, 0.8);
-  color: #f9fafb;
-  box-shadow:
-    0 10px 20px rgba(15, 23, 42, 0.7),
-    0 0 0 1px rgba(30, 64, 175, 0.7);
-}
-
-.action-btn:active {
-  transform: translateY(0);
-  box-shadow:
-    0 4px 10px rgba(15, 23, 42, 0.7),
-    0 0 0 1px rgba(15, 23, 42, 0.8);
-}
-
-/* Variant: gevaarlijke actie (bijv. delete) */
-.action-btn.danger {
-  border-color: rgba(248, 113, 113, 0.7);
-  color: #fecaca;
-}
-
-.action-btn.danger:hover {
-  border-color: rgba(248, 113, 113, 0.95);
-  color: #fee2e2;
-}
-
-/* ============================
-   CANVAS: RESIZE / ROTATE HANDLES
-   ============================ */
-
-.canvas-element .resize-handle {
-  position: absolute;
-  width: 9px;
-  height: 9px;
+  padding: 6px 12px;
   border-radius: 999px;
-  background: #22c55e;
-  box-shadow: 0 0 0 1px #0b1120;
-  z-index: 1005;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
 }
 
-.canvas-element .resize-handle.tl {
-  top: -5px;
-  left: -5px;
-  cursor: nwse-resize;
-}
-.canvas-element .resize-handle.tr {
-  top: -5px;
-  right: -5px;
-  cursor: nesw-resize;
-}
-.canvas-element .resize-handle.bl {
-  bottom: -5px;
-  left: -5px;
-  cursor: nesw-resize;
-}
-.canvas-element .resize-handle.br {
-  bottom: -5px;
-  right: -5px;
-  cursor: nwse-resize;
+.phone-screen .element-navbar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background: rgba(15, 23, 42, 0.95);
+  color: white;
+  font-weight: 600;
 }
 
-/* Rotate-handle (bijv. boven element) */
-.canvas-element .rotate-handle {
+/* ========== UI CHROME ========== */
+
+.phone-screen .element-actions {
   position: absolute;
-  top: -26px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -40px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.phone-screen .canvas-element:hover .element-actions,
+.phone-screen .canvas-element.selected .element-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.phone-screen .action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.phone-screen .action-btn:hover {
+  background: #6366f1;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.phone-screen .action-btn.danger:hover {
+  background: #ef4444;
+}
+
+.resize-handle.se {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
   width: 16px;
   height: 16px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 0% 0%, #22c55e, #16a34a);
-  border: 1px solid rgba(15, 23, 42, 0.85);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.85);
-  cursor: grab;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #6366f1;
+  cursor: se-resize;
+  z-index: 1001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* ============================
-   CANVAS: DROP INDICATORS
-   ============================ */
+/* ========== ANIMATIONS ========== */
 
-.canvas-drop-indicator {
-  position: absolute;
-  pointer-events: none;
-  border: 2px dashed rgba(59, 130, 246, 0.6);
-  border-radius: 12px;
-  background: rgba(37, 99, 235, 0.06);
-  backdrop-filter: blur(8px);
-  opacity: 0;
-  transform: scale(0.98);
-  transition:
-    opacity 0.12s ease,
-    transform 0.12s ease;
-  z-index: 900;
+@keyframes popIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.canvas-drop-indicator.active {
-  opacity: 1;
-  transform: scale(1);
+.phone-screen .canvas-element.pop-in {
+  animation: popIn 0.2s ease-out;
 }
 
-/* Schaduw onder mogelijke dropzone */
-.canvas-drop-indicator.shadow {
-  box-shadow:
-    0 0 0 1px rgba(15, 23, 42, 0.8),
-    0 18px 45px rgba(15, 23, 42, 0.9);
-}
+/* ========== GRID OVERLAY ========== */
 
-/* ============================
-   CANVAS: SELECTIE & ALIGNMENT
-   ============================ */
-
-/* Selectie-box bij drag-select */
-.canvas-selection-box {
-  position: absolute;
-  border: 1px dashed rgba(148, 163, 184, 0.9);
-  background: rgba(30, 64, 175, 0.08);
-  backdrop-filter: blur(2px);
-  pointer-events: none;
-  z-index: 950;
-}
-
-/* Alignment lines (smart guides) */
-.canvas-alignment-line {
-  position: absolute;
-  background: rgba(248, 250, 252, 0.9);
-  pointer-events: none;
-  z-index: 940;
-}
-
-.canvas-alignment-line.horizontal {
-  height: 1px;
-  width: 100%;
-}
-
-.canvas-alignment-line.vertical {
-  width: 1px;
-  height: 100%;
-}
-
-/* ============================
-   CANVAS: GRID & OVERLAYS
-   ============================ */
-
-.canvas-grid-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.18;
-  background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.25) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.25) 1px, transparent 1px);
-  background-size: 8px 8px;
-  z-index: 100;
-}
-
-.canvas-grid-overlay.is-hidden {
-  display: none;
-}
-
-/* ============================
-   CANVAS: EMPTY STATE
-   ============================ */
-
-.canvas-empty-state {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 32px;
-  text-align: center;
-  color: rgba(148, 163, 184, 0.9);
-  pointer-events: none;
-  z-index: 10;
-}
-
-.canvas-empty-state-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  color: rgba(148, 163, 184, 0.95);
-  box-shadow:
-    0 16px 45px rgba(15, 23, 42, 0.85),
-    0 0 0 1px rgba(15, 23, 42, 0.95);
-  background: radial-gradient(circle at 0% 0%, #020617, #020617);
-}
-
-.canvas-empty-state-title {
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: rgba(226, 232, 240, 0.96);
-}
-
-.canvas-empty-state-text {
-  max-width: 260px;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* ============================
-   CANVAS: TEXT EDIT MODUS
-   ============================ */
-
-/* Normale tekst op canvas is selectable (zodat je text kunt selecteren/bewerken) */
-.canvas-element .element-text {
-  user-select: text;
-}
-
-/* Als je een speciale editing-class gebruikt vanuit JS */
-.canvas-element .element-text.editing {
-  cursor: text;
-  outline: 2px solid #22c55e;
-  outline-offset: 2px;
-  background: rgba(15, 23, 42, 0.9);
-  border-radius: 6px;
+.grid-overlay {
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
