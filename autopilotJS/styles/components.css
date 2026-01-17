@@ -1,61 +1,278 @@
-/* components.css */
-.canvas-element {
-    position: absolute;
-    border: 2px solid transparent;
-    cursor: move;
-    user-select: none;
-}
+/* ============================
+   COMPONENT VISUALS (ON CANVAS)
+   ============================ */
 
-.canvas-element:hover {
-    border-color: #6366f1;
-}
-
-.canvas-element.selected {
-    border-color: #4f46e5;
-    box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
-}
-
-.text-element {
-    padding: 10px;
-    font-size: 16px;
-    color: #1e293b;
-}
-
-.button-element {
-    background: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-}
-
-.input-element {
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 16px;
-    width: 100%;
-    background: white;
-}
-
-/* Card-style containers in the phone */
-.element-container {
-  background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(30,64,175,0.94));
+/* Algemene wrapper voor een elementblok */
+.element-root {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(15, 23, 42, 0.9);
   box-shadow:
-    0 22px 60px rgba(15,23,42,0.75),
-    0 0 0 1px rgba(148,163,184,0.35);
-  border-radius: 24px;
-  padding: 20px;
-  color: #e5e7eb;
+    0 18px 45px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.95);
+  color: var(--text-primary, #e5e7eb);
+}
+
+/* Compactere variant */
+.element-root.compact {
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+/* ============================
+   TEXT ELEMENTEN
+   ============================ */
+
+.element-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary, #e5e7eb);
+}
+
+/* Kleine subtiele tekst */
+.element-text.muted {
+  font-size: 12px;
+  color: var(--text-muted, #9ca3af);
+}
+
+/* Heading */
+.element-heading {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-heading, #f9fafb);
+}
+
+/* Subheading */
+.element-subheading {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+/* Accent headline / hero */
+.element-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(96, 165, 250, 0.95);
+}
+
+/* ============================
+   BUTTON ELEMENT
+   ============================ */
+
+.element-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 8px 18px;
+  border-radius: 999px;
   border: none;
-  overflow: visible;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #2563eb, #22c55e);
+  color: #f9fafb;
+  box-shadow:
+    0 16px 40px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.95);
 }
 
-/* kinderen in de card krijgen geen eigen achtergrond */
-.element-container .canvas-element {
-  background: transparent;
+/* Ghost / secundaire button */
+.element-button.ghost {
+  background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 1));
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  color: rgba(226, 232, 240, 0.96);
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
 }
 
+/* Kleine icon-button */
+.element-button.icon-only {
+  width: 32px;
+  padding: 0;
+}
+
+/* ============================
+   INPUT ELEMENT
+   ============================ */
+
+.element-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.element-input-label {
+  font-size: 12px;
+  color: var(--text-muted, #9ca3af);
+}
+
+.element-input-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 0% 0%, #020617, #020617);
+  border: 1px solid rgba(30, 64, 175, 0.7);
+  color: #e5e7eb;
+  font-size: 13px;
+}
+
+/* Placeholder-achtige tekst */
+.element-input-placeholder {
+  color: rgba(148, 163, 184, 0.9);
+}
+
+/* ============================
+   CARD / SECTIE ELEMENT
+   ============================ */
+
+.element-card {
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  background: radial-gradient(circle at 0% 0%, #020617, #020617);
+  border: 1px solid rgba(15, 23, 42, 0.9);
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.95),
+    0 0 0 1px rgba(15, 23, 42, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.element-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.element-card-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.element-card-subtitle {
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.element-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ============================
+   BADGES / CHIPS
+   ============================ */
+
+.element-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  background: radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.1), rgba(59, 130, 246, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.65);
+  color: rgba(191, 219, 254, 0.98);
+}
+
+.element-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 1));
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  color: rgba(209, 213, 219, 0.98);
+}
+
+/* ============================
+   ICON / AVATAR
+   ============================ */
+
+.element-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 0% 0%, #1e40af, #0f172a);
+  border: 1px solid rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  font-size: 13px;
+}
+
+/* ============================
+   IMAGE
+   ============================ */
+
+.element-image {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.95);
+  background: radial-gradient(circle at 0% 0%, #020617, #020617);
+}
+
+.element-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placeholder als er nog geen echte afbeelding is */
+.element-image-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+/* ============================
+   LAYOUT HELPERS
+   ============================ */
+
+.element-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.element-row.space-between {
+  justify-content: space-between;
+}
+
+.element-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
