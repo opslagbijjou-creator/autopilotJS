@@ -783,15 +783,144 @@ html, body,
   color: var(--text-secondary);
 }
 
+/* =========================================================
+   ADVANCED PROPERTIES PANEL (Sigma-style)
+   ========================================================= */
+
+/* Property inputs - improved */
 .property-input {
   width: 100%;
   font-size: 12px;
   padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  background: rgba(2, 6, 23, 0.85);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(2, 6, 23, 0.9);
   color: var(--text-primary);
   outline: none;
+  transition: all 0.2s ease;
+  font-family: 'SF Mono', Menlo, Monaco, monospace;
+}
+
+.property-input:focus {
+  border-color: rgba(129, 140, 248, 0.8);
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+  background: rgba(2, 6, 23, 0.95);
+}
+
+.property-input[type="color"] {
+  height: 32px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.property-input[type="range"] {
+  padding: 0;
+  height: 24px;
+}
+
+.property-input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, 
+    rgba(148, 163, 184, 0.3), 
+    rgba(99, 102, 241, 0.8)
+  );
+}
+
+.property-input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  border: 2px solid rgba(15, 23, 42, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+}
+
+/* Select styling */
+.property-input[type="select"],
+.property-input select {
+  background: rgba(2, 6, 23, 0.9) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 10px center;
+  background-size: 12px;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+/* Property groups */
+.property-group {
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.property-group:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.property-group h5 {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.property-group h5::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #6366f1;
+  border-radius: 50%;
+}
+
+/* Property rows */
+.property-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.property-item {
+  flex: 1;
+}
+
+.property-item label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  margin-bottom: 5px;
+}
+
+/* Scrollbar styling */
+.properties-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.properties-body::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+  border-radius: 3px;
+}
+
+.properties-body::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 3px;
+}
+
+.properties-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
 }
 
 .property-input:focus {

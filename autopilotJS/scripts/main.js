@@ -1498,3 +1498,4 @@ function handlePropertyChange(elementId, propKey, input) {
   initAssetUpload();
   initAssetsDrag();
 });
+
