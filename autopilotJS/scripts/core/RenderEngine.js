@@ -1,13 +1,7 @@
 // scripts/core/RenderEngine.js - FIXED VERSION
-// Fixed: removeEventListeners bug
+// Fixed: removeEventListeners bug & removed duplicate snapToGrid
 
 (function () {
-  const GRID_SIZE = 8;
-
-  function snapToGrid(value) {
-    return Math.round(value / GRID_SIZE) * GRID_SIZE;
-  }
-
   // Geavanceerde styling engine
   class StyleEngine {
     static applyAllStyles(element, type, style = {}) {
@@ -443,8 +437,9 @@
         if (!moved && Math.hypot(dx, dy) < 2) return;
         moved = true;
 
-        let newX = snapToGrid(initialX + dx);
-        let newY = snapToGrid(initialY + dy);
+        // Use global snapToGrid or local helper
+        let newX = this.snapToGrid(initialX + dx);
+        let newY = this.snapToGrid(initialY + dy);
 
         if (elementEl) {
           elementEl.style.left = newX + "px";
@@ -458,8 +453,8 @@
 
         const dx = upEvent.clientX - startX;
         const dy = upEvent.clientY - startY;
-        let finalX = snapToGrid(initialX + dx);
-        let finalY = snapToGrid(initialY + dy);
+        let finalX = this.snapToGrid(initialX + dx);
+        let finalY = this.snapToGrid(initialY + dy);
 
         if (elementEl) {
           elementEl.classList.remove("dragging");
@@ -659,6 +654,12 @@
     setGridVisible(visible) {
       if (!this.gridOverlay) return;
       this.gridOverlay.style.display = visible ? "block" : "none";
+    }
+    
+    // Helper function for snapping
+    snapToGrid(value) {
+      const GRID_SIZE = 8;
+      return Math.round(value / GRID_SIZE) * GRID_SIZE;
     }
   }
 

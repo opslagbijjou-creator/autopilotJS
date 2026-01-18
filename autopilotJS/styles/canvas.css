@@ -302,3 +302,19 @@
     linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
+.drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}

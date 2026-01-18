@@ -1576,3 +1576,48 @@ select.property-input {
 .rounded-sm { border-radius: var(--radius-sm); }
 .rounded-md { border-radius: var(--radius-md); }
 .rounded-lg { border-radius: var(--radius-lg); }
+
+/* ============ DRAG & DROP STYLES ============ */
+.drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+}
+
+.drag-ghost i {
+  font-size: 14px;
+}
+
+.drag-ghost span {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Fix voor de CSS warnings */
+.btn-gradient {
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box; /* Voeg deze toe */
+}
+
+/* Voor eventuele andere background-clip waarschuwingen */
+.any-element-with-bg-clip {
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+
+/* Voor appearance warning */
+select, input[type="checkbox"], input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none; /* Voeg deze toe */
+}
